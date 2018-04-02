@@ -1,8 +1,11 @@
 {
-  "name": "hexlet_gendiff",
-  "version": "0.0.1",
+  "name": "hexlet_gendiff_stan",
+  "version": "0.1.0",
   "description": "This is a training project provided by [Hexlet](https://hexlet.io).",
   "main": "index.js",
+  "bin": {
+    "gendiff": "dist/bin/gendiff.js"
+  },
   "scripts": {
     "test": "jest",
     "eslint": "eslint",
@@ -33,5 +36,8 @@
     "eslint-plugin-jest": "^21.15.0",
     "jest": "^22.4.3",
     "jest-cli": "^22.4.3"
+  },
+  "dependencies": {
+    "commander": "^2.15.1"
   }
 }

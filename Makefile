@@ -9,6 +9,7 @@ start:
 build:
 	rm -rf dist
 	npm run build
+	#chmod 744 dist/bin/*
 
 test:
 	npm test
