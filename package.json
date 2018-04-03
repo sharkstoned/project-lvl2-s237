@@ -10,7 +10,8 @@
     "gendiff": "dist/bin/gendiff.js"
   },
   "scripts": {
-    "test": "jest --colors --watch",
+    "test": "jest --colors",
+    "watch": "npm test --watch",
     "eslint": "eslint",
     "babel-node": "babel-node",
     "prepublishOnly": "npm run build",
