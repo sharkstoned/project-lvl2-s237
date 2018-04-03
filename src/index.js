@@ -1,9 +1,15 @@
 import fs from 'fs';
-import _ from 'lodash';
 import os from 'os';
+import path from 'path';
+import _ from 'lodash';
+// import yaml from 'js-yaml';
 
-const readFromFiles = (...args) => args.map(path => fs.readFileSync(path, 'utf8'));
+const readFromFiles = (...args) => args.map(file => ({
+  ext: path.extname,
+  data: fs.readFileSync(file, 'utf8'),
+}));
 
+// todo:dispatch
 const parseData = inputArr => inputArr.map(str => JSON.parse(str));
 
 const compare = (data1, data2) => {
