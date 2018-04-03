@@ -1,6 +1,6 @@
 {
   "name": "hexlet_gendiff_stan",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "This is a training project provided by [Hexlet](https://hexlet.io).",
   "main": "index.js",
   "files": [
