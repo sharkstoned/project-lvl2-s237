@@ -7,7 +7,7 @@ import genDiff from '..';
 const makeAbsolutePath = relative => path.resolve(process.cwd(), relative);
 
 program
-  .version('0.2.1')
+  .version('0.3.0')
   .description('Compares two configuration files and shows a difference.')
   .arguments('<firstConfig> <secondConfig>')
   .option('-f, --format [type]', 'Output format');

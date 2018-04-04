@@ -12,3 +12,7 @@ test('flat JSON', () => {
 test('flat YAML', () => {
   expect(genDiff(`${base}/yaml/before.yml`, `${base}/yaml/after.yml`)).toBe(result);
 });
+
+test('flat INI', () => {
+  expect(genDiff(`${base}/ini/before.ini`, `${base}/ini/after.ini`)).toBe(result);
+});
