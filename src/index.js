@@ -1,17 +1,21 @@
 import fs from 'fs';
 import path from 'path';
-import parse from './parse';
-import findDiff from './findDiff';
+import getParser from './parsers';
+import makeDiff from './makeDiff';
 
-const constructConfigs = (...args) => args.map(file => ({
-  ext: path.extname(file),
-  data: fs.readFileSync(file, 'utf8'),
-}));
+const makeConfig = (filePath) => {
+  const data = fs.readFileSync(filePath, 'utf8');
+
+  const parse = getParser(path.extname(filePath));
+
+  return parse(data);
+};
 
 const genDiff = (path1, path2) => {
-  const [conf1, conf2] = constructConfigs(path1, path2);
+  const config1 = makeConfig(path1);
+  const config2 = makeConfig(path2);
 
-  return findDiff(parse(conf1), parse(conf2));
+  return makeDiff(config1, config2);
 };
 
 export default genDiff;
