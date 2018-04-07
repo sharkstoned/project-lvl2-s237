@@ -2,25 +2,36 @@ import path from 'path';
 import fs from 'fs';
 import genDiff from '../src';
 
-const baseFlat = '__tests__/__fixtures__/flat';
-const resultFlat = fs.readFileSync(path.resolve(baseFlat, 'result'), 'utf8');
+const base = '__tests__/__fixtures__/';
 
-test('flat JSON', () => {
-  expect(genDiff(`${baseFlat}/json/before.json`, `${baseFlat}/json/after.json`)).toBe(resultFlat);
+describe('tree', () => {
+  const result = fs.readFileSync(path.resolve(base, 'results/tree'), 'utf8');
+
+  test('JSON', () => {
+    expect(genDiff(`${base}/input/json/before.json`, `${base}/input/json/after.json`)).toBe(result);
+  });
+
+  test('YAML', () => {
+    expect(genDiff(`${base}/input/yaml/before.yml`, `${base}/input/yaml/after.yml`)).toBe(result);
+  });
+
+  test('INI', () => {
+    expect(genDiff(`${base}/input/ini/before.ini`, `${base}/input/ini/after.ini`)).toBe(result);
+  });
 });
 
-test('flat YAML', () => {
-  expect(genDiff(`${baseFlat}/yaml/before.yml`, `${baseFlat}/yaml/after.yml`)).toBe(resultFlat);
+describe.skip('plain', () => {
+  const result = fs.readFileSync(path.resolve(base, 'result/plain'), 'utf8');
+
+  test('JSON', () => {
+    expect(genDiff(`${base}/input/json/before.json`, `${base}/input/json/after.json`)).toBe(result);
+  });
+
+  test('YAML', () => {
+    expect(genDiff(`${base}/input/yaml/before.yml`, `${base}/input/yaml/after.yml`)).toBe(result);
+  });
+
+  test('INI', () => {
+    expect(genDiff(`${base}/input/ini/before.ini`, `${base}/input/ini/after.ini`)).toBe(result);
+  });
 });
-
-test('flat INI', () => {
-  expect(genDiff(`${baseFlat}/ini/before.ini`, `${baseFlat}/ini/after.ini`)).toBe(resultFlat);
-});
-
-const baseNested = '__tests__/__fixtures__/nested';
-const resultNested = fs.readFileSync(path.resolve(baseNested, 'result'), 'utf8');
-
-test('nested JSON', () => {
-  expect(genDiff(`${baseNested}/json/before.json`, `${baseNested}/json/after.json`)).toBe(resultNested);
-});
-
