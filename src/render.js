@@ -1,39 +1,59 @@
 import _ from 'lodash';
 
-const makeIndent = (levelMultiplier, sign = ' ') => {
-  const basicLength = 4;
+const basicLength = 4;
 
-  if (levelMultiplier === 0) {
+const getPrefix = (sign = ' ') => `${' '.repeat(basicLength - 2)}${sign} `;
+
+const getIndent = (multiplier) => {
+  if (multiplier <= 0) {
     return '';
   }
 
-  return `${' '.repeat((basicLength * levelMultiplier) - 2)}${sign} `;
+  return `${' '.repeat(basicLength * (multiplier))}`;
 };
 
-const render = (tree, nestingLevel = 1) => {
+const indentateEntry = (entry, level) => {
+  const firstIndent = getIndent(level - 1);
+  const restIndent = getIndent(level);
+
+  const [first, ...rest] = entry.split('\n');
+
+  return rest.reduce((acc, string) => `${acc}${restIndent}${string}\n`, `${firstIndent}${first}\n`);
+};
+
+const stringify = (valueToCheck, nestingLevel = 1) => {
+  if (!_.isPlainObject(valueToCheck)) {
+    return valueToCheck;
+  }
+
+  const objValue = valueToCheck;
+  const prewrapped = _.keys(objValue)
+    .reduce((acc, key) => `${acc}${`${getIndent(nestingLevel)}${key}: ${stringify(objValue[key], nestingLevel + 1)}\n`}`, '');
+
+  return `{\n${prewrapped}${getIndent(nestingLevel - 1)}}`;
+};
+
+const render = (tree, nestingLevel) => {
   const keys = _.keys(tree);
 
-  const stringify = (valueToCheck, innerNestingLevel = nestingLevel) => {
-    if (!_.isPlainObject(valueToCheck)) {
-      return valueToCheck;
-    }
-
-    const objValue = valueToCheck;
-    const prewrapped = _.keys(objValue)
-      .reduce((acc, key) => `${acc}${makeIndent(innerNestingLevel + 1)}${key}: ${stringify(objValue[key], innerNestingLevel + 1)}\n`, '');
-
-    return `{\n${prewrapped}${makeIndent(innerNestingLevel)}}`;
-  };
-
   const handlers = {
-    added: (key, props) => `${makeIndent(nestingLevel, '+')}${key}: ${stringify(props.value)}\n`,
-    removed: (key, props) => `${makeIndent(nestingLevel, '-')}${key}: ${stringify(props.value)}\n`,
-    remains: (key, props) => `${makeIndent(nestingLevel)}${key}: ${stringify(props.value)}\n`,
-    changed: (key, props) => `${makeIndent(nestingLevel, '-')}${key}: ${stringify(props.prevValue)}\n${makeIndent(nestingLevel, '+')}${key}: ${stringify(props.value)}\n`,
+    added: (key, props) => indentateEntry(`${getPrefix('+')}${key}: ${stringify(props.value)}`, nestingLevel),
+
+    removed: (key, props) => indentateEntry(`${getPrefix('-')}${key}: ${stringify(props.value)}`, nestingLevel),
+
+    remains: (key, props) => indentateEntry(`${getPrefix()}${key}: ${stringify(props.value)}`, nestingLevel),
+
+    changed: (key, props) => {
+      const previous = indentateEntry(`${getPrefix('-')}${key}: ${stringify(props.prevValue)}`, nestingLevel);
+      const actual = indentateEntry(`${getPrefix('+')}${key}: ${stringify(props.value)}`, nestingLevel);
+
+      return `${previous}${actual}`;
+    },
+
     nestedComparison: (key, props) => {
       const value = render(props.children, nestingLevel + 1);
 
-      return `${makeIndent(nestingLevel)}${key}: ${value}`;
+      return `${getIndent(nestingLevel)}${key}: ${value}`;
     },
   };
 
@@ -46,7 +66,7 @@ const render = (tree, nestingLevel = 1) => {
 
   const prewrapped = keys.reduce((acc, key) => `${acc}${makeDiffEntry(key)}`, '');
 
-  return `{\n${prewrapped}${makeIndent(nestingLevel - 1)}}\n`;
+  return `{\n${prewrapped}${getIndent(nestingLevel - 1)}}\n`;
 };
 
-export default render;
+export default tree => render(tree, 1);

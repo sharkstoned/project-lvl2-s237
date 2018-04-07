@@ -4,7 +4,7 @@ import getParser from './parsers';
 import buildAst from './buildAst';
 import render from './render';
 
-const makeConfig = (filePath) => {
+const getConfig = (filePath) => {
   const data = fs.readFileSync(filePath, 'utf8');
 
   const parse = getParser(path.extname(filePath));
@@ -13,8 +13,8 @@ const makeConfig = (filePath) => {
 };
 
 const genDiff = (path1, path2) => {
-  const config1 = makeConfig(path1);
-  const config2 = makeConfig(path2);
+  const config1 = getConfig(path1);
+  const config2 = getConfig(path2);
 
   const ast = buildAst(config1, config2);
   return render(ast);
