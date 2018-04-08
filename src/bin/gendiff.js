@@ -15,7 +15,7 @@ program
 program.action((path1, path2) => {
   const fullPath1 = makeAbsolutePath(path1);
   const fullPath2 = makeAbsolutePath(path2);
-  console.log(genDiff(fullPath1, fullPath2));
+  console.log(genDiff(fullPath1, fullPath2, program.format));
 });
 
 program.parse(process.argv);

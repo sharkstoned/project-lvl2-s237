@@ -2,7 +2,7 @@ import _ from 'lodash';
 
 const props = [
   {
-    check: (val1, val2) => !val1 && val2,
+    check: (data1, data2, key) => !_.has(data1, key) && _.has(data2, key),
     getEntry(val1, val2) {
       return {
         state: 'added',
@@ -11,7 +11,7 @@ const props = [
     },
   },
   {
-    check: (val1, val2) => val1 && !val2,
+    check: (data1, data2, key) => _.has(data1, key) && !_.has(data2, key),
     getEntry(val1) {
       return {
         state: 'removed',
@@ -20,7 +20,7 @@ const props = [
     },
   },
   {
-    check: (val1, val2) => _.isPlainObject(val1) && _.isPlainObject(val2),
+    check: (data1, data2, key) => _.isPlainObject(data1[key]) && _.isPlainObject(data2[key]),
     getEntry(val1, val2, func) {
       return {
         state: 'nestedComparison',
@@ -29,7 +29,7 @@ const props = [
     },
   },
   {
-    check: (val1, val2) => !_.isEqual(val1, val2),
+    check: (data1, data2, key) => !_.isEqual(data1[key], data2[key]),
     getEntry(val1, val2) {
       return {
         state: 'changed',
@@ -39,7 +39,7 @@ const props = [
     },
   },
   {
-    check: (val1, val2) => _.isEqual(val1, val2),
+    check: (data1, data2, key) => _.isEqual(data1[key], data2[key]),
     getEntry(val1) {
       return {
         state: 'remains',
@@ -53,11 +53,9 @@ const buildAst = (data1, data2) => {
   const uniqueKeys = _.union(_.keys(data1), _.keys(data2));
 
   const getPropsForEntry = (key) => {
-    const value1 = data1[key];
-    const value2 = data2[key];
-    const { getEntry } = _.find(props, ({ check }) => check(value1, value2));
+    const { getEntry } = _.find(props, ({ check }) => check(data1, data2, key));
 
-    return getEntry(value1, value2, buildAst);
+    return getEntry(data1[key], data2[key], buildAst);
   };
 
   return uniqueKeys.reduce((acc, key) => ({ ...acc, [key]: getPropsForEntry(key) }), {});
