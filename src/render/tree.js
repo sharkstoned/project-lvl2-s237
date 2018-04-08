@@ -47,7 +47,7 @@ const render = (tree, nestingLevel) => {
       const previous = indentateEntry(`${getPrefix('-')}${key}: ${stringify(props.prevValue)}`, nestingLevel);
       const actual = indentateEntry(`${getPrefix('+')}${key}: ${stringify(props.value)}`, nestingLevel);
 
-      return `${previous}${actual}`;
+      return [previous, actual];
     },
 
     nestedComparison: (key, props) => {
@@ -64,9 +64,9 @@ const render = (tree, nestingLevel) => {
     return handler(key, propsObject);
   };
 
-  const prewrapped = keys.reduce((acc, key) => `${acc}${makeDiffEntry(key)}`, '');
+  const entriesArr = keys.reduce((acc, key) => [...acc, makeDiffEntry(key)], []);
 
-  return `{\n${prewrapped}${getIndent(nestingLevel - 1)}}\n`;
+  return `{\n${_.flatten(entriesArr).join('')}${getIndent(nestingLevel - 1)}}\n`;
 };
 
 export default tree => render(tree, 1);
