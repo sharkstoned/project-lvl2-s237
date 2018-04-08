@@ -33,8 +33,8 @@ const stringify = (valueToCheck, nestingLevel = 1) => {
   return `{\n${prewrapped}${getIndent(nestingLevel - 1)}}`;
 };
 
-const render = (tree, nestingLevel) => {
-  const keys = _.keys(tree);
+const render = (ast, nestingLevel) => {
+  const keys = _.keys(ast);
 
   const handlers = {
     added: (key, props) => indentateEntry(`${getPrefix('+')}${key}: ${stringify(props.value)}`, nestingLevel),
@@ -44,10 +44,10 @@ const render = (tree, nestingLevel) => {
     remains: (key, props) => indentateEntry(`${getPrefix()}${key}: ${stringify(props.value)}`, nestingLevel),
 
     changed: (key, props) => {
-      const previous = indentateEntry(`${getPrefix('-')}${key}: ${stringify(props.prevValue)}`, nestingLevel);
-      const actual = indentateEntry(`${getPrefix('+')}${key}: ${stringify(props.value)}`, nestingLevel);
+      const oldValue = indentateEntry(`${getPrefix('-')}${key}: ${stringify(props.oldValue)}`, nestingLevel);
+      const newValue = indentateEntry(`${getPrefix('+')}${key}: ${stringify(props.newValue)}`, nestingLevel);
 
-      return [previous, actual];
+      return [oldValue, newValue];
     },
 
     nestedComparison: (key, props) => {
@@ -58,8 +58,8 @@ const render = (tree, nestingLevel) => {
   };
 
   const makeDiffEntry = (key) => {
-    const propsObject = tree[key];
-    const handler = handlers[propsObject.state];
+    const propsObject = ast[key];
+    const handler = handlers[propsObject.type];
 
     return handler(key, propsObject);
   };
@@ -69,4 +69,4 @@ const render = (tree, nestingLevel) => {
   return `{\n${_.flatten(entriesArr).join('')}${getIndent(nestingLevel - 1)}}\n`;
 };
 
-export default tree => render(tree, 1);
+export default ast => render(ast, 1);

@@ -8,8 +8,8 @@ const stringify = (val) => {
   return 'complex value';
 };
 
-const render = (tree, parentProperty) => {
-  const keys = _.keys(tree);
+const render = (ast, parentProperty) => {
+  const keys = _.keys(ast);
 
   const getFullProperty = key => `${parentProperty}${key}`;
 
@@ -17,13 +17,13 @@ const render = (tree, parentProperty) => {
     added: (key, props) => `Property '${getFullProperty(key)}' was added with ${stringify(props.value)}\n`,
     removed: key => `Property '${getFullProperty(key)}' was removed\n`,
     remains: () => '',
-    changed: (key, props) => `Property '${getFullProperty(key)}' was updated with ${stringify(props.value)}\n`,
+    changed: (key, props) => `Property '${getFullProperty(key)}' was updated with ${stringify(props.newValue)}\n`,
     nestedComparison: (key, props) => render(props.children, `${parentProperty}${key}.`),
   };
 
   const makeDiffEntry = (key) => {
-    const propsObject = tree[key];
-    const handler = handlers[propsObject.state];
+    const propsObject = ast[key];
+    const handler = handlers[propsObject.type];
 
     return handler(key, propsObject);
   };
@@ -33,4 +33,4 @@ const render = (tree, parentProperty) => {
   return _.flatten(entriesArr).join('');
 };
 
-export default tree => render(tree, '');
+export default ast => render(ast, '');

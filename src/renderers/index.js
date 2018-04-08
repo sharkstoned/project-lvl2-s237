@@ -1,9 +1,11 @@
-import renderTree from './render/tree';
-import renderPlain from './render/plain';
+import renderTree from './tree';
+import renderPlain from './plain';
+import renderJson from './json';
 
 const renderers = {
   tree: renderTree,
   plain: renderPlain,
+  json: renderJson,
 };
 
 const getRenderer = (format) => {

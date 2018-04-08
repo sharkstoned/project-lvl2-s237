@@ -5,7 +5,7 @@ const props = [
     check: (data1, data2, key) => !_.has(data1, key) && _.has(data2, key),
     getEntry(val1, val2) {
       return {
-        state: 'added',
+        type: 'added',
         value: val2,
       };
     },
@@ -14,7 +14,7 @@ const props = [
     check: (data1, data2, key) => _.has(data1, key) && !_.has(data2, key),
     getEntry(val1) {
       return {
-        state: 'removed',
+        type: 'removed',
         value: val1,
       };
     },
@@ -23,7 +23,7 @@ const props = [
     check: (data1, data2, key) => _.isPlainObject(data1[key]) && _.isPlainObject(data2[key]),
     getEntry(val1, val2, func) {
       return {
-        state: 'nestedComparison',
+        type: 'nestedComparison',
         children: func(val1, val2),
       };
     },
@@ -32,9 +32,9 @@ const props = [
     check: (data1, data2, key) => !_.isEqual(data1[key], data2[key]),
     getEntry(val1, val2) {
       return {
-        state: 'changed',
-        value: val2,
-        prevValue: val1,
+        type: 'changed',
+        newValue: val2,
+        oldValue: val1,
       };
     },
   },
@@ -42,7 +42,7 @@ const props = [
     check: (data1, data2, key) => _.isEqual(data1[key], data2[key]),
     getEntry(val1) {
       return {
-        state: 'remains',
+        type: 'remains',
         value: val1,
       };
     },
